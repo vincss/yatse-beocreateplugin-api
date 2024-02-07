@@ -14,8 +14,7 @@
 
   -->
 
-<manifest
-    package="tv.yatse.plugin.avreceiver.api">
+<manifest>
 
     <application>
     </application>

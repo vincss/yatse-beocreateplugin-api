@@ -18,13 +18,13 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 30
-    buildToolsVersion "30.0.3"
+    compileSdk 33
+    buildToolsVersion '34.0.0'
 
     defaultConfig {
         applicationId "tv.yatse.plugin.avreceiver.sample"
         minSdkVersion 14
-        targetSdkVersion 30
+        targetSdkVersion 33
         versionCode 2
         versionName "2.0"
     }
@@ -34,10 +34,17 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+/*
     sourceSets {
         androidTest {
             java.srcDirs file('src/test')
         }
+    }
+ */
+    namespace 'tv.yatse.plugin.avreceiver.sample'
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 
 }

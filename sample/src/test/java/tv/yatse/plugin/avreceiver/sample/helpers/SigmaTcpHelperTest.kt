@@ -9,7 +9,7 @@ class SigmaTcpHelperTest {
   fun hellWorld() {
     val sigmaTcpHelper = SigmaTcpHelper()
     val ret = sigmaTcpHelper.helloWorld()
-    assertTrue(ret === "Hello^World")
+    assertTrue(ret === "Hello World")
   }
 
 }
