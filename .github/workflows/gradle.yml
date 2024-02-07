@@ -40,7 +40,7 @@ jobs:
       run: ./gradlew test
 
     - name: Upload Android Artifact
-      uses: actions/upload-artifact@v3.1.0
+      uses: actions/upload-artifact@v4.3.0
       with:
         name: beocreateplugin-apk
         path: sample/build/outputs/apk/**/*.apk
