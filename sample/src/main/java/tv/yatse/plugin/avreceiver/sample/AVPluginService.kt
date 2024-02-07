@@ -23,9 +23,11 @@ import tv.yatse.plugin.avreceiver.api.AVReceiverPluginService
 import tv.yatse.plugin.avreceiver.api.PluginCustomCommand
 import tv.yatse.plugin.avreceiver.api.YatseLogger
 import tv.yatse.plugin.avreceiver.sample.helpers.PreferencesHelper
+import tv.yatse.plugin.avreceiver.sample.helpers.SigmaTcpController
 import java.util.ArrayList
 import kotlin.math.max
 import kotlin.math.min
+import kotlin.math.roundToInt
 
 /**
  * Sample AVReceiverPluginService that implement all functions with dummy code that displays Toast and logs to main Yatse log system.
@@ -38,8 +40,9 @@ class AVPluginService : AVReceiverPluginService() {
     private var mHostUniqueId: String? = null
     private var mHostName: String? = null
     private var mHostIp: String? = null
-    private var mIsMuted = false
-    private var mVolumePercent = 50.0
+    private var mController: SigmaTcpController? = null
+    private val mVolumeIncrement = 1
+
 
     override fun getVolumeUnitType(): Int {
         return UNIT_TYPE_PERCENT
@@ -56,41 +59,47 @@ class AVPluginService : AVReceiverPluginService() {
     override fun setMuteStatus(status: Boolean): Boolean {
         YatseLogger.logVerbose(applicationContext, TAG, "Setting mute status: $status")
         displayToast("Setting mute status : $status")
-        mIsMuted = status
+        mController?.mute()
         return true
     }
 
     override fun getMuteStatus(): Boolean {
-        return mIsMuted
+        return mController?.muted == false
     }
 
     override fun toggleMuteStatus(): Boolean {
         YatseLogger.logVerbose(applicationContext, TAG, "Toggling mute status")
         displayToast("Toggling mute status")
-        mIsMuted = !mIsMuted
+        if (getMuteStatus()) {
+            mController?.unmute()
+        } else {
+            mController?.unmute()
+        }
         return true
     }
 
     override fun setVolumeLevel(volume: Double): Boolean {
         YatseLogger.logVerbose(applicationContext, TAG, "Setting volume level: $volume")
         displayToast("Setting volume : $volume")
-        mVolumePercent = volume
+        mController?.volume = volume.roundToInt()
         return true
     }
 
     override fun getVolumeLevel(): Double {
-        return mVolumePercent
+        return mController?.volume?.toDouble() ?: 0.0
     }
 
     override fun volumePlus(): Boolean {
-        mVolumePercent = min(100.0, mVolumePercent + 5)
+        mController?.volume = min(100.0, getVolumeLevel() + mVolumeIncrement).roundToInt()
+
         YatseLogger.logVerbose(applicationContext, TAG, "Calling volume plus")
         displayToast("Volume plus")
         return true
     }
 
     override fun volumeMinus(): Boolean {
-        mVolumePercent = max(0.0, mVolumePercent - 5)
+        mController?.volume = max(0.0, getVolumeLevel() - mVolumeIncrement).roundToInt()
+
         YatseLogger.logVerbose(applicationContext, TAG, "Calling volume minus")
         displayToast("Volume minus")
         return true
@@ -102,11 +111,11 @@ class AVPluginService : AVReceiverPluginService() {
     }
 
     override fun getDefaultCustomCommands(): List<PluginCustomCommand> {
-        val source = getString(R.string.plugin_unique_id)
+//        val source = getString(R.string.plugin_unique_id)
         val commands: MutableList<PluginCustomCommand> = ArrayList()
         // Plugin custom commands must set the source parameter to their plugin unique Id !
-        commands.add(PluginCustomCommand(title = "Sample command 1", source = source, param1 = "Sample command 1", type = 0))
-        commands.add(PluginCustomCommand(title = "Sample command 2", source = source, param1 = "Sample command 2", type = 1, readOnly = true))
+//        commands.add(PluginCustomCommand(title = "Sample command 1", source = source, param1 = "Sample command 1", type = 0))
+//        commands.add(PluginCustomCommand(title = "Sample command 2", source = source, param1 = "Sample command 2", type = 1, readOnly = true))
         return commands
     }
 
@@ -128,8 +137,9 @@ class AVPluginService : AVReceiverPluginService() {
         if (TextUtils.isEmpty(receiverIp)) {
             YatseLogger.logError(applicationContext, TAG, "No configuration for $name")
         }
+        mController = SigmaTcpController(mHostIp!!)
         YatseLogger.logVerbose(
-            applicationContext, TAG, "Connected to: $name/$mHostUniqueId"
+                applicationContext, TAG, "Connected to: $name/$mHostUniqueId"
         )
     }
 
