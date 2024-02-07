@@ -137,7 +137,8 @@ class AVPluginService : AVReceiverPluginService() {
         if (TextUtils.isEmpty(receiverIp)) {
             YatseLogger.logError(applicationContext, TAG, "No configuration for $name")
         }
-        mController = SigmaTcpController(mHostIp!!)
+        displayToast("connectToHost: $ip")
+// ToDo        mController = SigmaTcpController(mHostIp!!)
         YatseLogger.logVerbose(
                 applicationContext, TAG, "Connected to: $name/$mHostUniqueId"
         )
