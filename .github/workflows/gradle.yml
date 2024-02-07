@@ -42,14 +42,8 @@ jobs:
     - name: Upload Android Artifact
       uses: actions/upload-artifact@v4.3.0
       with:
-        name: sample-debug.apk
-        path: sample/build/outputs/apk/debug/sample-debug.apk
-
-    - name: Upload Android Artifact
-      uses: actions/upload-artifact@v4.3.0
-      with:
-        name: sample-release-unsigned.apk
-        path: sample/build/outputs/apk/release/sample-release-unsigned.apk
+        name: beocreateplugin-apk
+        path: sample/build/outputs/apk/**/*.apk
 
 #
 #  dependency-submission:
