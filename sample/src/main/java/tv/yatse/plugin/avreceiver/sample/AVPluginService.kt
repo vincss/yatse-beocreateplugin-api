@@ -64,16 +64,16 @@ class AVPluginService : AVReceiverPluginService() {
     }
 
     override fun getMuteStatus(): Boolean {
-        return mController?.muted == false
+        return mController?.muted == true
     }
 
     override fun toggleMuteStatus(): Boolean {
         YatseLogger.logVerbose(applicationContext, TAG, "Toggling mute status")
         displayToast("Toggling mute status")
         if (getMuteStatus()) {
-            mController?.mute()
-        } else {
             mController?.unmute()
+        } else {
+            mController?.mute()
         }
         return true
     }
