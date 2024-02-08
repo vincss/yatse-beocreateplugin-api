@@ -3,22 +3,13 @@ package tv.yatse.plugin.avreceiver.sample.helpers
 import java.math.BigInteger
 import java.net.Socket
 import kotlin.math.pow
+import kotlin.math.round
 import kotlin.math.roundToInt
 
-fun Double.roundTo(n: Int): Double {
-    return "%.${n}f".format(this).toDouble()
-}
-
-interface IRemoteController {
-    fun getVolume(): Double
-    fun setVolume(value: Double)
-    fun mute()
-    fun unmute()
-
-    val muted: Boolean
-
-    var volume: Int
-    val isConnected: Boolean
+fun Double.roundTo(decimals: Int): Double {
+    var multiplier = 1.0
+    repeat(decimals) { multiplier *= 10 }
+    return round(this * multiplier) / multiplier
 }
 
 class SigmaTcpController(address: String, port: Int = DefaultPort) : IRemoteController {
@@ -50,7 +41,6 @@ class SigmaTcpController(address: String, port: Int = DefaultPort) : IRemoteCont
                     value += octet.toInt() and 0xff
                 }
                 return value.toDouble() / 2.0.pow(24)
-//                return (f * 1000.0) / 1000.0
             }
 
             var f = (p as Int).toDouble() / 2.0.pow(24)

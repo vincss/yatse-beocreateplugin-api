@@ -11,7 +11,8 @@ class SigmaTcpControllerTest {
     @Ignore("Manual testing")
     @Test
     fun manualTesting() {
-        val sigmaTcpHelper = SigmaTcpController("192.168.0.4")
+//        val sigmaTcpHelper = SigmaTcpController("192.168.0.4")
+        val sigmaTcpHelper = SuspendedController("192.168.0.4") { _, _ -> run {} }
 
 
         sigmaTcpHelper.volume = 33
@@ -19,7 +20,6 @@ class SigmaTcpControllerTest {
         assertTrue(volume == 33)
         val vol = sigmaTcpHelper.getVolume()
         assertTrue(vol == 0.33)
-
 
         sigmaTcpHelper.setVolume(0.1)
         assertTrue(sigmaTcpHelper.getVolume() == 0.1)

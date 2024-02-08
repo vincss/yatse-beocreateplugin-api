@@ -18,6 +18,7 @@ package tv.yatse.plugin.avreceiver.sample
 import android.os.Handler
 import android.os.Looper
 import android.text.TextUtils
+import android.util.Log
 import android.widget.Toast
 import tv.yatse.plugin.avreceiver.api.AVReceiverPluginService
 import tv.yatse.plugin.avreceiver.api.PluginCustomCommand
@@ -42,7 +43,6 @@ class AVPluginService : AVReceiverPluginService() {
     private var mController: IRemoteController? = null
     private val mVolumeIncrement = 1
 
-
     override fun getVolumeUnitType(): Int {
         return UNIT_TYPE_PERCENT
     }
@@ -58,6 +58,7 @@ class AVPluginService : AVReceiverPluginService() {
     override fun setMuteStatus(status: Boolean): Boolean {
         YatseLogger.logVerbose(applicationContext, TAG, "Setting mute status: $status")
         displayToast("Setting mute status : $status")
+
         mController?.mute()
         return true
     }
@@ -70,7 +71,7 @@ class AVPluginService : AVReceiverPluginService() {
         YatseLogger.logVerbose(applicationContext, TAG, "Toggling mute status")
         displayToast("Toggling mute status")
         if (getMuteStatus()) {
-            mController?.unmute()
+            mController?.mute()
         } else {
             mController?.unmute()
         }
@@ -79,7 +80,7 @@ class AVPluginService : AVReceiverPluginService() {
 
     override fun setVolumeLevel(volume: Double): Boolean {
         YatseLogger.logVerbose(applicationContext, TAG, "Setting volume level: $volume")
-        displayToast("Setting volume : $volume")
+        displayToast("Setting volume: $volume")
         mController?.volume = volume.roundToInt()
         return true
     }
@@ -89,22 +90,25 @@ class AVPluginService : AVReceiverPluginService() {
     }
 
     override fun volumePlus(): Boolean {
-        mController?.volume = min(100.0, getVolumeLevel() + mVolumeIncrement).roundToInt()
+        val volume = min(100.0, getVolumeLevel() + mVolumeIncrement).roundToInt()
+        mController?.volume = volume
 
         YatseLogger.logVerbose(applicationContext, TAG, "Calling volume plus")
-        displayToast("Volume plus")
+        displayToast("Volume plus: $volume")
         return true
     }
 
     override fun volumeMinus(): Boolean {
-        mController?.volume = max(0.0, getVolumeLevel() - mVolumeIncrement).roundToInt()
+        val volume = max(0.0, getVolumeLevel() - mVolumeIncrement).roundToInt()
+        mController?.volume = volume
 
         YatseLogger.logVerbose(applicationContext, TAG, "Calling volume minus")
-        displayToast("Volume minus")
+        displayToast("Volume minus: $volume")
         return true
     }
 
     override fun refresh(): Boolean {
+        Log.i(TAG, "---- refresh ?")
         YatseLogger.logVerbose(applicationContext, TAG, "Refreshing values from receiver")
         return true
     }
@@ -140,9 +144,10 @@ class AVPluginService : AVReceiverPluginService() {
         if (TextUtils.isEmpty(receiverIp)) {
             YatseLogger.logError(applicationContext, TAG, "No configuration for $name")
         }
-        displayToast("connectToHost: $ip")
-// ToDo        mController = SigmaTcpController(mHostIp!!)
-        mController = MockRemoteController()
+
+        Log.i(TAG, "---- connectToHost $mHostIp")
+        mController = SuspendedController(mHostIp!!, Log::i)
+
         YatseLogger.logVerbose(
             applicationContext, TAG, "Connected to: $name/$mHostUniqueId"
         )
