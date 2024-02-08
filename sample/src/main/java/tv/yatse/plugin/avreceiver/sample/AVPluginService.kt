@@ -22,8 +22,7 @@ import android.widget.Toast
 import tv.yatse.plugin.avreceiver.api.AVReceiverPluginService
 import tv.yatse.plugin.avreceiver.api.PluginCustomCommand
 import tv.yatse.plugin.avreceiver.api.YatseLogger
-import tv.yatse.plugin.avreceiver.sample.helpers.PreferencesHelper
-import tv.yatse.plugin.avreceiver.sample.helpers.SigmaTcpController
+import tv.yatse.plugin.avreceiver.sample.helpers.*
 import java.util.ArrayList
 import kotlin.math.max
 import kotlin.math.min
@@ -40,7 +39,7 @@ class AVPluginService : AVReceiverPluginService() {
     private var mHostUniqueId: String? = null
     private var mHostName: String? = null
     private var mHostIp: String? = null
-    private var mController: SigmaTcpController? = null
+    private var mController: IRemoteController? = null
     private val mVolumeIncrement = 1
 
 
@@ -139,6 +138,7 @@ class AVPluginService : AVReceiverPluginService() {
         }
         displayToast("connectToHost: $ip")
 // ToDo        mController = SigmaTcpController(mHostIp!!)
+    mController = MockRemoteController()
         YatseLogger.logVerbose(
                 applicationContext, TAG, "Connected to: $name/$mHostUniqueId"
         )
