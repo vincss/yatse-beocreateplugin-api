@@ -119,7 +119,11 @@ class AVPluginService : AVReceiverPluginService() {
     }
 
     override fun executeCustomCommand(customCommand: PluginCustomCommand?): Boolean {
-        YatseLogger.logVerbose(applicationContext, TAG, "Executing CustomCommand: ${customCommand!!.title}")
+        YatseLogger.logVerbose(
+            applicationContext,
+            TAG,
+            "Executing CustomCommand: ${customCommand!!.title}"
+        )
         displayToast(customCommand.param1)
         return false
     }
@@ -138,9 +142,9 @@ class AVPluginService : AVReceiverPluginService() {
         }
         displayToast("connectToHost: $ip")
 // ToDo        mController = SigmaTcpController(mHostIp!!)
-    mController = MockRemoteController()
+        mController = MockRemoteController()
         YatseLogger.logVerbose(
-                applicationContext, TAG, "Connected to: $name/$mHostUniqueId"
+            applicationContext, TAG, "Connected to: $name/$mHostUniqueId"
         )
     }
 
@@ -153,7 +157,8 @@ class AVPluginService : AVReceiverPluginService() {
     }
 
     override fun restoreSettings(settings: String?, version: Long): Boolean {
-        val result = PreferencesHelper.getInstance(applicationContext).importSettingsFromJSON(settings!!, version)
+        val result = PreferencesHelper.getInstance(applicationContext)
+            .importSettingsFromJSON(settings!!, version)
         if (result) {
             connectToHost(mHostUniqueId, mHostName, mHostIp)
         }
