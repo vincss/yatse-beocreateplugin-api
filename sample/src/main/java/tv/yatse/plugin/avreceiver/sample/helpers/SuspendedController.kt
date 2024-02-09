@@ -19,8 +19,13 @@ class SuspendedController(address: String, val log: (tag: String, message: Strin
 
     private fun initController(address: String) = runBlocking {
         withContext(Dispatchers.IO) {
-            mController = SigmaTcpController(address)
-            log(TAG, "---- Connected to $address")
+            try {
+                mController = SigmaTcpController(address)
+                log(TAG, "---- Connected to $address")
+            } catch (e: Exception) {
+                log(TAG, "---- Failed to connect to $address : ${e.message}")
+                mController = null
+            }
         }
     }
 
@@ -39,7 +44,7 @@ class SuspendedController(address: String, val log: (tag: String, message: Strin
     }
 
     override fun getVolume(): Double {
-        return getSuspended { mController!!.getVolume() }
+        return getSuspended { mController?.getVolume() ?: 0.0 }
     }
 
     override fun setVolume(value: Double) {
@@ -55,13 +60,13 @@ class SuspendedController(address: String, val log: (tag: String, message: Strin
     }
 
     override val muted: Boolean
-        get() = getSuspended { mController!!.muted }
+        get() = getSuspended { mController?.muted ?: false }
     override var volume: Int
-        get() = getSuspended { mController!!.volume }
+        get() = getSuspended { mController?.volume ?: 0 }
         set(value) {
-            setSuspended { mController!!.volume = value }
+            setSuspended { mController?.volume = value }
         }
     override val isConnected: Boolean
-        get() = getSuspended { mController!!.isConnected }
+        get() = getSuspended { mController?.isConnected ?: false }
 
 }

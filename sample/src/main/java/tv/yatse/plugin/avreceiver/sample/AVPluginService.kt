@@ -108,7 +108,12 @@ class AVPluginService : AVReceiverPluginService() {
     }
 
     override fun refresh(): Boolean {
-        Log.i(TAG, "---- refresh ?")
+        Log.i(TAG, "---- refresh ")
+        if(mController?.isConnected != true) {
+            connectToHost(mHostUniqueId, mHostName, mHostIp)
+        }
+        getMuteStatus()
+        getVolumeLevel()
         YatseLogger.logVerbose(applicationContext, TAG, "Refreshing values from receiver")
         return true
     }
@@ -145,8 +150,9 @@ class AVPluginService : AVReceiverPluginService() {
             YatseLogger.logError(applicationContext, TAG, "No configuration for $name")
         }
 
-        Log.i(TAG, "---- connectToHost $mHostIp")
-        mController = SuspendedController(mHostIp!!, Log::i)
+        val address = receiverIp.ifBlank { mHostIp }
+        Log.i(TAG, "---- connectingToHost $address")
+        mController = SuspendedController(address!!.trim(), Log::i)
 
         YatseLogger.logVerbose(
             applicationContext, TAG, "Connected to: $name/$mHostUniqueId"

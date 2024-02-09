@@ -20,8 +20,8 @@
     <string name="sample_plugin_description">Beocreate plugin</string>
     <string name="sample_plugin_settings">Settings for:</string>
     <string name="sample_plugin_error">Error:</string>
-    <string name="sample_plugin_receiver_ip">Receiver IP</string>
-    <string name="sample_plugin_receiver_ip_description">The IP of SigmaTCP server</string>
+    <string name="sample_plugin_receiver_ip">Only if different from Kodi</string>
+    <string name="sample_plugin_receiver_ip_description">SigmaTCP Server IP</string>
     <string name="sample_plugin_tests">Tests</string>
     <string name="sample_plugin_tests_description">You can test your settings by pressing the buttons below.</string>
 
