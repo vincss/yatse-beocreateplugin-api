@@ -12,8 +12,14 @@ fun Double.roundTo(decimals: Int): Double {
     return round(this * multiplier) / multiplier
 }
 
-class SigmaTcpController(address: String, port: Int = DefaultPort) : IRemoteController {
+class SigmaTcpController(
+    private val address: String,
+    private val log: (tag: String, message: String) -> Unit,
+    private val port: Int = DefaultPort
+) : IRemoteController {
     companion object {
+        private const val TAG = "SigmaTcpController"
+
         const val DefaultPort = 8086
         const val HeaderSize = 14
         const val DecimalLength = 4
@@ -71,10 +77,16 @@ class SigmaTcpController(address: String, port: Int = DefaultPort) : IRemoteCont
     private var muteAddress: Int? = null
     private var internalVolume: Int? = null
 
-    private val tcpClient = Socket(address, port)
+    private var tcpClient = Socket(address, port)
 
     init {
+        connect()
+    }
+
+    private fun connect() {
+        tcpClient = Socket(address, port)
         tcpClient.tcpNoDelay = true
+        log(TAG, "--- connected ${address}:$port")
     }
 
     override fun getVolume(): Double {
@@ -201,6 +213,14 @@ class SigmaTcpController(address: String, port: Int = DefaultPort) : IRemoteCont
 
     override val isConnected: Boolean
         get() {
-            return tcpClient.isConnected
+            try {
+                if (!tcpClient.isConnected || tcpClient.isClosed) {
+                    connect()
+                }
+                return tcpClient.isConnected
+            } catch (e: Exception) {
+                log(TAG, "--- ERROR isConnected ${e.message}")
+            }
+            return false
         }
 }

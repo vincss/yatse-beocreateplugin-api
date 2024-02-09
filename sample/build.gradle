@@ -40,7 +40,6 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-
 }
 
 dependencies {
@@ -53,22 +52,4 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4"
 
     testImplementation "junit:junit:4.13.2"
-
-
 }
-
-/*
-sourceSets {
-    main {
-        java {
-            srcDirs 'src/main'
-
-        }
-    }
-    test {
-        java {
-            srcDirs 'src/test'
-        }
-    }
-}
-*/

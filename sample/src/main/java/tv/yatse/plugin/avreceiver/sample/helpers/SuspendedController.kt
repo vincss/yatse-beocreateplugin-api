@@ -20,10 +20,10 @@ class SuspendedController(address: String, val log: (tag: String, message: Strin
     private fun initController(address: String) = runBlocking {
         withContext(Dispatchers.IO) {
             try {
-                mController = SigmaTcpController(address)
-                log(TAG, "---- Connected to $address")
+                mController = SigmaTcpController(address, log)
+                log(TAG, "-- Connected to $address")
             } catch (e: Exception) {
-                log(TAG, "---- Failed to connect to $address : ${e.message}")
+                log(TAG, "-- Failed to connect to $address : ${e.message}")
                 mController = null
             }
         }
@@ -32,15 +32,26 @@ class SuspendedController(address: String, val log: (tag: String, message: Strin
     private fun setSuspended(function: () -> Unit) = runBlocking {
         withContext(Dispatchers.IO) {
             function()
+            try {
+                mController?.isConnected
+                function()
+            } catch (e: Exception) {
+                log(TAG, "ERROR setSuspended ${e.message}")
+            }
         }
     }
 
     private fun <T> getSuspended(function: () -> T): T = runBlocking {
-        var value: T
+        var value: T? = null
         withContext(Dispatchers.IO) {
-            value = function()
+            try {
+                mController?.isConnected
+                value = function()
+            } catch (e: Exception) {
+                log(TAG, "ERROR getSuspended ${e.message}")
+            }
         }
-        value
+        value!!
     }
 
     override fun getVolume(): Double {

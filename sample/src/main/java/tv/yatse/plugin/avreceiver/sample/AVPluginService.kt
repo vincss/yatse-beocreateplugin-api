@@ -59,7 +59,13 @@ class AVPluginService : AVReceiverPluginService() {
         YatseLogger.logVerbose(applicationContext, TAG, "Setting mute status: $status")
         displayToast("Setting mute status : $status")
 
-        mController?.mute()
+        if (status) {
+            mController?.mute()
+
+        } else {
+            mController?.unmute()
+        }
+
         return true
     }
 
@@ -70,17 +76,16 @@ class AVPluginService : AVReceiverPluginService() {
     override fun toggleMuteStatus(): Boolean {
         YatseLogger.logVerbose(applicationContext, TAG, "Toggling mute status")
         displayToast("Toggling mute status")
-        if (getMuteStatus()) {
-            mController?.unmute()
-        } else {
-            mController?.mute()
-        }
+
+        setMuteStatus(!getMuteStatus())
+
         return true
     }
 
     override fun setVolumeLevel(volume: Double): Boolean {
         YatseLogger.logVerbose(applicationContext, TAG, "Setting volume level: $volume")
         displayToast("Setting volume: $volume")
+
         mController?.volume = volume.roundToInt()
         return true
     }
@@ -108,8 +113,8 @@ class AVPluginService : AVReceiverPluginService() {
     }
 
     override fun refresh(): Boolean {
-        Log.i(TAG, "---- refresh ")
-        if(mController?.isConnected != true) {
+        Log.d(TAG, "- refresh ")
+        if (mController?.isConnected != true) {
             connectToHost(mHostUniqueId, mHostName, mHostIp)
         }
         getMuteStatus()
@@ -151,8 +156,8 @@ class AVPluginService : AVReceiverPluginService() {
         }
 
         val address = receiverIp.ifBlank { mHostIp }
-        Log.i(TAG, "---- connectingToHost $address")
-        mController = SuspendedController(address!!.trim(), Log::i)
+        Log.d(TAG, "- connectingToHost $address")
+        mController = SuspendedController(address!!.trim(), Log::d)
 
         YatseLogger.logVerbose(
             applicationContext, TAG, "Connected to: $name/$mHostUniqueId"
