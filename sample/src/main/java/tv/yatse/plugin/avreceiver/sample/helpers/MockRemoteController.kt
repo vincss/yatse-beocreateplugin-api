@@ -6,8 +6,16 @@ class MockRemoteController : IRemoteController {
 
     private var mVolume = 0.0
     private var mMuted = false
+    override fun connect() {
+        TODO("Not yet implemented")
+    }
+
+    override fun close() {
+        TODO("Not yet implemented")
+    }
+
     override fun getVolume(): Double {
-        return mVolume;
+        return mVolume
     }
 
     override fun setVolume(value: Double) {

@@ -13,9 +13,9 @@ fun Double.roundTo(decimals: Int): Double {
 }
 
 class SigmaTcpController(
-    private val address: String,
-    private val log: (tag: String, message: String) -> Unit,
-    private val port: Int = DefaultPort
+        private val address: String,
+        private val log: (tag: String, message: String) -> Unit,
+        private val port: Int = DefaultPort
 ) : IRemoteController {
     companion object {
         private const val TAG = "SigmaTcpController"
@@ -75,22 +75,26 @@ class SigmaTcpController(
 
     private var volumeAddress: Int? = null
     private var muteAddress: Int? = null
-    private var internalVolume: Int? = null
 
-    private var tcpClient = Socket(address, port)
+    private var tcpClient: Socket? = null
 
     init {
         connect()
     }
 
-    private fun connect() {
+    override fun connect() {
         tcpClient = Socket(address, port)
-        tcpClient.tcpNoDelay = true
+        tcpClient?.tcpNoDelay = true
         log(TAG, "--- connected ${address}:$port")
+    }
+
+    override fun close() {
+        tcpClient?.close()
     }
 
     override fun getVolume(): Double {
         val volume = decimalVal(readMemory(getVolumeAddress()))
+        log(TAG, "--- getVolume $volume")
         return (volume).roundTo(2)
     }
 
@@ -103,6 +107,7 @@ class SigmaTcpController(
     }
 
     override fun setVolume(value: Double) {
+        log(TAG, "--- setVolume $value")
         writeMemory(getVolumeAddress(), value)
     }
 
@@ -134,13 +139,13 @@ class SigmaTcpController(
 
     private fun receiveMetaDataAddress(): Int {
         val rcvData = ByteArray(256)
-        val readNbr = tcpClient.getInputStream().read(rcvData, 0, rcvData.size)
+        val readNbr = tcpClient?.getInputStream()?.read(rcvData, 0, rcvData.size)
 
         if (rcvData[0] != CommandMetaDataResponse.toByte()) {
             println("WrongHeader")
         }
 
-        val txt = rcvData.copyOfRange(HeaderSize, readNbr).toString(Charsets.UTF_8)
+        val txt = rcvData.copyOfRange(HeaderSize, readNbr!!).toString(Charsets.UTF_8)
         return txt.toInt()
     }
 
@@ -154,7 +159,7 @@ class SigmaTcpController(
         val attributeByte = attribute.toByteArray(Charsets.UTF_8)
         val packet = header + attributeByte
 
-        tcpClient.getOutputStream().write(packet, 0, packet.size)
+        tcpClient?.getOutputStream()?.write(packet, 0, packet.size)
     }
 
     private fun readMemory(addr: Int, decimalLength: Int = DecimalLength): ByteArray {
@@ -167,10 +172,10 @@ class SigmaTcpController(
         data[11] = (addr and 0xff).toByte()
         data[10] = ((addr shr 8) and 0xff).toByte()
 
-        tcpClient.getOutputStream().write(data, 0, HeaderSize)
+        tcpClient?.getOutputStream()?.write(data, 0, HeaderSize)
 
         val rcvData = ByteArray(HeaderSize + decimalLength)
-        tcpClient.getInputStream().read(rcvData, 0, rcvData.size)
+        tcpClient?.getInputStream()?.read(rcvData, 0, rcvData.size)
         return rcvData.copyOfRange(HeaderSize, rcvData.size)
     }
 
@@ -195,32 +200,19 @@ class SigmaTcpController(
         packet[6] = (packetLength and 0xff).toByte()
         packet[5] = ((packetLength shr 8) and 0xff).toByte()
 
-        tcpClient.getOutputStream().write(packet)
+        tcpClient?.getOutputStream()?.write(packet)
     }
 
     override var volume: Int
         get() {
-            if (internalVolume == null) {
-                val vol = getVolume()
-                internalVolume = (vol * 100).roundToInt()
-            }
-            return internalVolume!!
+            return (getVolume() * 100).roundToInt()
         }
         set(value) {
-            internalVolume = value
             setVolume((value.toDouble() / 100))
         }
 
     override val isConnected: Boolean
         get() {
-            try {
-                if (!tcpClient.isConnected || tcpClient.isClosed) {
-                    connect()
-                }
-                return tcpClient.isConnected
-            } catch (e: Exception) {
-                log(TAG, "--- ERROR isConnected ${e.message}")
-            }
-            return false
+            return tcpClient?.isConnected ?: false
         }
 }
