@@ -13,9 +13,9 @@ fun Double.roundTo(decimals: Int): Double {
 }
 
 class SigmaTcpController(
-        private val address: String,
-        private val log: (tag: String, message: String) -> Unit,
-        private val port: Int = DefaultPort
+    private val address: String,
+    private val log: (tag: String, message: String) -> Unit,
+    private val port: Int = DefaultPort
 ) : IRemoteController {
     companion object {
         private const val TAG = "SigmaTcpController"

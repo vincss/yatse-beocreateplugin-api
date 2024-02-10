@@ -6,9 +6,9 @@ import kotlinx.coroutines.withContext
 
 
 class SuspendedController(
-        private val address: String,
-        private val log: (tag: String, message: String) -> Unit)
-    : IRemoteController {
+    private val address: String,
+    private val log: (tag: String, message: String) -> Unit
+) : IRemoteController {
 
     private var mController: SigmaTcpController? = null
 
