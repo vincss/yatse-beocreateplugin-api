@@ -44,9 +44,6 @@ class AVPluginService : AVReceiverPluginService() {
     private var mController: IRemoteController? = null
     private val mVolumeIncrement = 1
 
-    private var mVolumePercent = 50.0
-    private var mIsMuted = false
-
     override fun onDestroy() {
         Log.d(TAG, "- onDestroy")
         if (mController != null) {
@@ -71,21 +68,17 @@ class AVPluginService : AVReceiverPluginService() {
         YatseLogger.logVerbose(applicationContext, TAG, "Setting mute status: $status")
         displayToast("Setting mute status : $status")
 
-        mIsMuted = if (status) {
+        if (status) {
             mController?.mute()
-            true
-
         } else {
             mController?.unmute()
-            false
         }
 
         return true
     }
 
     override fun getMuteStatus(): Boolean {
-        mIsMuted = mController?.muted == true
-        return mIsMuted
+        return mController?.muted == true
     }
 
     override fun toggleMuteStatus(): Boolean {
@@ -101,42 +94,41 @@ class AVPluginService : AVReceiverPluginService() {
         YatseLogger.logVerbose(applicationContext, TAG, "Setting volume level: $volume")
         displayToast("Setting volume: $volume")
 
-        Log.d(TAG, "- setVolumeLevel newVolume:$volume currentVolume:$mVolumePercent")
+        Log.d(TAG, "- setVolumeLevel $volume")
 
         mController?.volume = volume.roundToInt()
-        mVolumePercent = volume
         return true
     }
 
     override fun getVolumeLevel(): Double {
-        mVolumePercent = mController?.volume?.toDouble() ?: 0.0
-        Log.d(TAG, "- getVolumeLevel volume:$mVolumePercent")
-        return mVolumePercent
+        val volume = mController?.volume?.toDouble() ?: 0.0
+        Log.d(TAG, "- getVolumeLevel $volume")
+        return volume
     }
 
     override fun volumePlus(): Boolean {
-        mVolumePercent = min(100.0, getVolumeLevel() + mVolumeIncrement)
-        mController?.volume = mVolumePercent.roundToInt()
+        val volume = min(100.0, getVolumeLevel() + mVolumeIncrement)
+        mController?.volume = volume.roundToInt()
 
         YatseLogger.logVerbose(applicationContext, TAG, "Calling volume plus")
-        displayToast("Volume plus: $mVolumePercent")
+        displayToast("Volume plus: $volume")
         return true
     }
 
     override fun volumeMinus(): Boolean {
-        mVolumePercent = max(0.0, getVolumeLevel() - mVolumeIncrement)
-        mController?.volume = mVolumePercent.roundToInt()
+        val volume = max(0.0, getVolumeLevel() - mVolumeIncrement)
+        mController?.volume = volume.roundToInt()
 
         YatseLogger.logVerbose(applicationContext, TAG, "Calling volume minus")
-        displayToast("Volume minus: $mVolumePercent")
+        displayToast("Volume minus: $volume")
         return true
     }
 
     override fun refresh(): Boolean {
-        getMuteStatus()
-        getVolumeLevel()
+        val isMuted = getMuteStatus()
+        val volumePercent = getVolumeLevel()
 
-        Log.d(TAG, "- refresh mVolumePercent:$mVolumePercent mIsMuted:$mIsMuted")
+        Log.d(TAG, "- refresh volumePercent:$volumePercent isMuted:$isMuted")
 
         YatseLogger.logVerbose(applicationContext, TAG, "Refreshing values from receiver")
         return true
@@ -148,9 +140,9 @@ class AVPluginService : AVReceiverPluginService() {
 
     override fun executeCustomCommand(customCommand: PluginCustomCommand?): Boolean {
         YatseLogger.logVerbose(
-                applicationContext,
-                TAG,
-                "Executing CustomCommand: ${customCommand!!.title}"
+            applicationContext,
+            TAG,
+            "Executing CustomCommand: ${customCommand!!.title}"
         )
         displayToast(customCommand.param1)
         return false
@@ -176,7 +168,7 @@ class AVPluginService : AVReceiverPluginService() {
         refresh()
 
         YatseLogger.logVerbose(
-                applicationContext, TAG, "Connected to: $name/$mHostUniqueId"
+            applicationContext, TAG, "Connected to: $name/$mHostUniqueId"
         )
     }
 
@@ -190,7 +182,7 @@ class AVPluginService : AVReceiverPluginService() {
 
     override fun restoreSettings(settings: String?, version: Long): Boolean {
         val result = PreferencesHelper.getInstance(applicationContext)
-                .importSettingsFromJSON(settings!!, version)
+            .importSettingsFromJSON(settings!!, version)
         if (result) {
             connectToHost(mHostUniqueId, mHostName, mHostIp)
         }
