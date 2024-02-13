@@ -78,7 +78,9 @@ class AVPluginService : AVReceiverPluginService() {
     }
 
     override fun getMuteStatus(): Boolean {
-        return mController?.muted == true
+        val muted = mController?.muted == true
+        YatseLogger.logVerbose(applicationContext, TAG, "Getting mute status: $muted")
+        return muted
     }
 
     override fun toggleMuteStatus(): Boolean {
@@ -102,6 +104,7 @@ class AVPluginService : AVReceiverPluginService() {
 
     override fun getVolumeLevel(): Double {
         val volume = mController?.volume?.toDouble() ?: 0.0
+        YatseLogger.logVerbose(applicationContext, TAG, "Getting volume level: $volume")
         Log.d(TAG, "- getVolumeLevel $volume")
         return volume
     }
@@ -130,7 +133,7 @@ class AVPluginService : AVReceiverPluginService() {
 
         Log.d(TAG, "- refresh volumePercent:$volumePercent isMuted:$isMuted")
 
-        YatseLogger.logVerbose(applicationContext, TAG, "Refreshing values from receiver")
+        YatseLogger.logVerbose(applicationContext, TAG, "Refreshing values from receiver volumePercent:$volumePercent isMuted:$isMuted")
         return true
     }
 
