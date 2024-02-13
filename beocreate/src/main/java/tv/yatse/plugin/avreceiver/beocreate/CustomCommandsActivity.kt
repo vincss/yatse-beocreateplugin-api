@@ -13,7 +13,7 @@
  * limitations under the License.
  *
  */
-package tv.yatse.plugin.avreceiver.sample
+package tv.yatse.plugin.avreceiver.beocreate
 
 import android.os.Bundle
 import android.view.View

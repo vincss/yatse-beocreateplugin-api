@@ -13,7 +13,7 @@
  * limitations under the License.
  *
  */
-package tv.yatse.plugin.avreceiver.sample
+package tv.yatse.plugin.avreceiver.beocreate
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -28,7 +28,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
 import tv.yatse.plugin.avreceiver.api.AVReceiverPluginService
 import tv.yatse.plugin.avreceiver.api.YatseLogger
-import tv.yatse.plugin.avreceiver.sample.helpers.PreferencesHelper
+import tv.yatse.plugin.avreceiver.beocreate.helpers.PreferencesHelper
 
 /**
  * Sample SettingsActivity that handle correctly the parameters passed by Yatse.

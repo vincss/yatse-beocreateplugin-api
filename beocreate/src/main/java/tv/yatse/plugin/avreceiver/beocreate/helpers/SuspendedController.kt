@@ -1,4 +1,4 @@
-package tv.yatse.plugin.avreceiver.sample.helpers
+package tv.yatse.plugin.avreceiver.beocreate.helpers
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking

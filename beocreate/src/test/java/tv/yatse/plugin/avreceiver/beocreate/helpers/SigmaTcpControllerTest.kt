@@ -1,4 +1,4 @@
-package tv.yatse.plugin.avreceiver.sample.helpers
+package tv.yatse.plugin.avreceiver.beocreate.helpers
 
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue

@@ -13,7 +13,7 @@
  * limitations under the License.
  *
  */
-package tv.yatse.plugin.avreceiver.sample
+package tv.yatse.plugin.avreceiver.beocreate
 
 import android.os.Handler
 import android.os.Looper
@@ -23,9 +23,9 @@ import android.widget.Toast
 import tv.yatse.plugin.avreceiver.api.AVReceiverPluginService
 import tv.yatse.plugin.avreceiver.api.PluginCustomCommand
 import tv.yatse.plugin.avreceiver.api.YatseLogger
-import tv.yatse.plugin.avreceiver.sample.helpers.IRemoteController
-import tv.yatse.plugin.avreceiver.sample.helpers.PreferencesHelper
-import tv.yatse.plugin.avreceiver.sample.helpers.SuspendedController
+import tv.yatse.plugin.avreceiver.beocreate.helpers.IRemoteController
+import tv.yatse.plugin.avreceiver.beocreate.helpers.PreferencesHelper
+import tv.yatse.plugin.avreceiver.beocreate.helpers.SuspendedController
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt

@@ -13,7 +13,7 @@
  * limitations under the License.
  *
  */
-package tv.yatse.plugin.avreceiver.sample.helpers
+package tv.yatse.plugin.avreceiver.beocreate.helpers
 
 import android.annotation.SuppressLint
 import android.content.Context

@@ -43,7 +43,7 @@ jobs:
       uses: actions/upload-artifact@v4.3.0
       with:
         name: beocreateplugin-apk
-        path: sample/build/outputs/apk/**/*.apk
+        path: beocreate/build/outputs/apk/**/*.apk
 
 #
 #  dependency-submission:
