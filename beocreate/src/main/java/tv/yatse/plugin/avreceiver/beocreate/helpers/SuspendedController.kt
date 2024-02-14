@@ -89,8 +89,11 @@ class SuspendedController(
         setSuspended { mController?.unmute() }
     }
 
-    override val muted: Boolean
+    override var muted: Boolean
         get() = getSuspended({ mController?.muted ?: false }, false)
+        set(value) {
+            setSuspended { mController?.muted = value }
+        }
     override var volume: Int
         get() = getSuspended({ mController?.volume ?: 0 }, 0)
         set(value) {

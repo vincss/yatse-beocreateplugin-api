@@ -119,7 +119,7 @@ class SigmaTcpController(
         setMute(false)
     }
 
-    override val muted: Boolean
+    override var muted: Boolean
         get() {
             if (muteAddress == null) {
                 sendCommandGetMetaData(AttributeMuteRegister)
@@ -127,6 +127,9 @@ class SigmaTcpController(
             }
             val muteVal = BigInteger(readMemory(muteAddress!!)).toInt()
             return muteVal == 1
+        }
+        set(value) {
+            setMute(value)
         }
 
     private fun setMute(mute: Boolean) {

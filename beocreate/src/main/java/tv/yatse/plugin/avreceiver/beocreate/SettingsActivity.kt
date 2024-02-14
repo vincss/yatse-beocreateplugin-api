@@ -20,6 +20,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
+import android.util.Log
 import android.view.View
 import android.widget.EditText
 import android.widget.ImageButton
@@ -28,7 +29,10 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
 import tv.yatse.plugin.avreceiver.api.AVReceiverPluginService
 import tv.yatse.plugin.avreceiver.api.YatseLogger
-import tv.yatse.plugin.avreceiver.beocreate.helpers.PreferencesHelper
+import tv.yatse.plugin.avreceiver.beocreate.helpers.*
+import kotlin.math.max
+import kotlin.math.min
+import kotlin.math.roundToInt
 
 /**
  * Sample SettingsActivity that handle correctly the parameters passed by Yatse.
@@ -43,11 +47,14 @@ import tv.yatse.plugin.avreceiver.beocreate.helpers.PreferencesHelper
 class SettingsActivity : AppCompatActivity() {
     private var mMediaCenterUniqueId: String = ""
     private var mMediaCenterName: String = ""
+    private var mMediaCenterIp: String = ""
     private var mMuted = false
+    private val mVolumeIncrement = 1
 
     private lateinit var mViewSettingsTitle: TextView
     private lateinit var mViewReceiverIP: EditText
     private lateinit var mViewMute: ImageButton
+    private lateinit var mController: IRemoteController
 
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,6 +63,9 @@ class SettingsActivity : AppCompatActivity() {
         if (intent != null) {
             mMediaCenterUniqueId = intent.getStringExtra(AVReceiverPluginService.EXTRA_STRING_MEDIA_CENTER_UNIQUE_ID) ?: ""
             mMediaCenterName = intent.getStringExtra(AVReceiverPluginService.EXTRA_STRING_MEDIA_CENTER_NAME) ?: ""
+            mMediaCenterIp = intent.getStringExtra(AVReceiverPluginService.EXTRA_STRING_MEDIA_CENTER_IP) ?: ""
+            mController = SuspendedController(mMediaCenterIp, Log::d)
+//            mController = MockRemoteController(mMediaCenterIp)
         }
         if (TextUtils.isEmpty(mMediaCenterUniqueId)) {
             YatseLogger.logError(applicationContext, TAG, "Error : No media center unique id sent")
@@ -73,12 +83,17 @@ class SettingsActivity : AppCompatActivity() {
         findViewById<View>(R.id.btn_toggle_mute).setOnClickListener {
             mViewMute.setImageResource(if (!mMuted) R.drawable.ic_volume_low else R.drawable.ic_volume_off)
             mMuted = !mMuted
+            mController.muted = mMuted
             Snackbar.make(findViewById(R.id.receiver_settings_content), "Toggling mute", Snackbar.LENGTH_LONG).show()
         }
         findViewById<View>(R.id.btn_vol_down).setOnClickListener {
+            val volume = max(0.0, (mController.volume - mVolumeIncrement).toDouble())
+            mController.volume = volume.roundToInt()
             Snackbar.make(findViewById(R.id.receiver_settings_content), "Volume down", Snackbar.LENGTH_LONG).show()
         }
         findViewById<View>(R.id.btn_vol_up).setOnClickListener {
+            val volume = min(100.0, (mController.volume + mVolumeIncrement).toDouble())
+            mController.volume = volume.roundToInt()
             Snackbar.make(findViewById(R.id.receiver_settings_content), "Volume up", Snackbar.LENGTH_LONG).show()
         }
         findViewById<View>(R.id.btn_ok).setOnClickListener {

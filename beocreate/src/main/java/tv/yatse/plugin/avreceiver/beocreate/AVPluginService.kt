@@ -193,6 +193,6 @@ class AVPluginService : AVReceiverPluginService() {
     }
 
     companion object {
-        private const val TAG = "AVPluginService"
+        private const val TAG = "BeocreateService"
     }
 }

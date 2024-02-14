@@ -10,7 +10,7 @@ interface IRemoteController {
     fun mute()
     fun unmute()
 
-    val muted: Boolean
+    var muted: Boolean
 
     var volume: Int
     val isConnected: Boolean
