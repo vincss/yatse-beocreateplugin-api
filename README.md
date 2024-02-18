@@ -12,5 +12,6 @@ The app has been made to work with the [dsptoolkit](https://github.com/hifiberry
 
 ## **⚠️** 
 There is a race condition when starting the Yatse remote, the volume is at 100% : https://community.yatse.tv/t/dev-plugin-for-beocreate/4538/16?u=vincs
+
 You should disable the volume pop-up in the Advanced settings :
 ![yatse_bug](./doc/yatse_bug.png)
